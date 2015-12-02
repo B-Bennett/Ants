@@ -40,9 +40,10 @@ public class Main extends Application {
             context.fillOval(ant.x, ant.y, 5, 5);
         }
     }
-    double randonStep(){
+    double randomStep(){
         return Math.random() * 2 - 1;
     }
+
     Ant moveAnt(Ant ant)  {
 
         try {
@@ -51,13 +52,13 @@ public class Main extends Application {
             e.printStackTrace();
         }
 
-        ant.x += randonStep();
-        ant.y += randonStep();
+        ant.x += randomStep();
+        ant.y += randomStep();
         return ant;
     }
 
     void updateAnts(){
-        ants = ants.stream()
+        ants = ants.parallelStream()
                 .map(this::moveAnt)
                 .collect(Collectors.toCollection(ArrayList<Ant>::new));
     }
@@ -80,6 +81,8 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        ants = createAnts();
+
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -87,7 +90,6 @@ public class Main extends Application {
                 lastTimeStamp = now;
                 updateAnts();
                 drawAnts(context);
-
             }
         };
         timer.start();
